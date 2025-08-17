@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Hello World with Three.js</title>
+  <style>
+    body { margin: 0; }
+    canvas { display: block; }
+  </style>
+</head>
+<body>
+<script src="https://cdn.jsdelivr.net/npm/three@0.160.1/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.160.1/examples/jsm/loaders/FontLoader.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.160.1/examples/jsm/geometries/TextGeometry.js"></script>
+<script>
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+const renderer = new THREE.WebGLRenderer({ antialias: true });
+renderer.setSize(window.innerWidth, window.innerHeight);
+document.body.appendChild(renderer.domElement);
+
+const light = new THREE.DirectionalLight(0xffffff, 1);
+light.position.set(0, 1, 1).normalize();
+scene.add(light);
+
+const loader = new THREE.FontLoader();
+loader.load('https://threejs.org/examples/fonts/helvetiker_regular.typeface.json', function (font) {
+  const material = new THREE.MeshPhongMaterial({ color: 0x00ff00 });
+  const words = ['Hello', 'World'];
+  let index = 0;
+
+  function addWord() {
+    const geometry = new THREE.TextGeometry(words[index], {
+      font: font,
+      size: 1,
+      height: 0.2,
+      curveSegments: 12,
+      bevelEnabled: false,
+    });
+
+    const mesh = new THREE.Mesh(geometry, material);
+    mesh.position.set(-words[index].length / 2, 0, 0);
+    scene.add(mesh);
+
+    index++;
+    if (index < words.length) {
+      setTimeout(addWord, 1000);
+    }
+  }
+
+  addWord();
+});
+
+camera.position.z = 5;
+function animate() {
+  requestAnimationFrame(animate);
+  renderer.render(scene, camera);
+}
+animate();
+</script>
+</body>
+</html>
